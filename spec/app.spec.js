@@ -486,11 +486,47 @@ describe("/api", () => {
             expect(error).to.equal("Invalid URL");
           });
       });
+      it("responds with 404 when user requests invalid path/URL", () => {
+        return request(app)
+          .get("/api/potics")
+          .expect(404)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid URL");
+          });
+      });
+      it("responds with 404 when user requests invalid path/URL", () => {
+        return request(app)
+          .get("/s")
+          .expect(404)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid URL");
+          });
+      });
     });
     describe("send405", () => {
       it("responds with 405 when a user requests a unsupported method ", () => {
         return request(app)
           .delete("/api/topics")
+          .expect(405)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Method Not Allowed");
+          });
+      });
+      it("responds with 405 when a user requests a unsupported method ", () => {
+        return request(app)
+          .get("/api/comments/5")
+          .expect(405)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Method Not Allowed");
+          });
+      });
+      it("responds with 405 when a user requests a unsupported method ", () => {
+        return request(app)
+          .delete("/api/articles")
           .expect(405)
           .then(({ body }) => {
             const error = body.msg;
