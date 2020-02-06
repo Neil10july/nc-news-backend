@@ -409,29 +409,94 @@ describe("/api", () => {
       });
     });
   });
-});
 
-describe("generic error handlers", () => {
-  describe("send404", () => {
-    it("responds with 404 when user requests invalid path/URL", () => {
-      return request(app)
-        .get("/api/potics")
-        .expect(404)
-        .then(({ body }) => {
-          const error = body.msg;
-          expect(error).to.equal("Invalid URL");
-        });
+  describe("/comments", () => {
+    describe("/:comment_id", () => {
+      it("PATCH 201: Responds with status 201 and increments the votes property by amount specified", () => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send({ inc_votes: 15 })
+          .expect(201)
+          .then(({ body }) => {
+            const comment = body.comment;
+            expect(comment[0].votes).to.equal(29);
+          });
+      });
+      it("PATCH 400: Responds with status 400 and relevant message when the inc_votes is not an integer", () => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send({ inc_votes: "a" })
+          .expect(400)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid syntax type");
+          });
+      });
+      it("PATCH 400: Responds with status 400 and relevant message when passed a non-existent comment_id", () => {
+        return request(app)
+          .patch("/api/comments/500")
+          .send({ inc_votes: 60 })
+          .expect(400)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid comment_id");
+          });
+      });
+      it("PATCH 400: Responds with status 400 and relevant message when the request body is in an unsupported/incorrect format", () => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send({ inc_voes: "a" })
+          .expect(400)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal(
+              "Body must be in correct format (Ex. { inc_vote: 5 })"
+            );
+          });
+      });
+      it("DELETE 200: Responds with status 200 and confirmation message", () => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(200)
+          .then(({ body }) => {
+            const msg = body.msg;
+            expect(msg).to.equal("comment deleted");
+          });
+      });
+      it("DELETE 400: Responds with status 400 and relevant message when passed non-existent comment_id", () => {
+        return request(app)
+          .delete("/api/comments/600")
+          .expect(400)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid comment_id");
+          });
+      });
     });
   });
-  describe("send405", () => {
-    it("responds with 405 when a user requests a unsupported method ", () => {
-      return request(app)
-        .delete("/api/topics")
-        .expect(405)
-        .then(({ body }) => {
-          const error = body.msg;
-          expect(error).to.equal("Method Not Allowed");
-        });
+
+  describe("generic error handlers", () => {
+    describe("send404", () => {
+      it("responds with 404 when user requests invalid path/URL", () => {
+        return request(app)
+          .get("/api/potics")
+          .expect(404)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid URL");
+          });
+      });
+    });
+    describe("send405", () => {
+      it("responds with 405 when a user requests a unsupported method ", () => {
+        return request(app)
+          .delete("/api/topics")
+          .expect(405)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Method Not Allowed");
+          });
+      });
     });
   });
 });

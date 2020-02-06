@@ -13,6 +13,19 @@ const check_article = article_id => {
     });
 };
 
+const check_comment = comment_id => {
+  return db("comments")
+    .select("*")
+    .where({ comment_id })
+    .then(data => {
+      if (data.length !== 0) {
+        return true;
+      } else {
+        return Promise.reject({ status: 400, msg: "Invalid comment_id" });
+      }
+    });
+};
+
 const check_author = author => {
   if (author) {
     return db("users")
@@ -68,5 +81,6 @@ module.exports = {
   check_order,
   check_author,
   check_topic,
+  check_comment,
   check_all
 };

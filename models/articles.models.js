@@ -65,8 +65,8 @@ exports.inc_article_votes = (article_id, inc_by) => {
         .where("article_id", "=", article_id)
         .increment("votes", inc_by)
         .returning("*")
-        .then(data => {
-          return data;
+        .then(article => {
+          return article;
         });
     } else {
       return Promise.reject({ status: 400, msg: "Please check your queries" });
