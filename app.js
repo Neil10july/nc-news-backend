@@ -1,9 +1,18 @@
 const express = require("express");
 const app = express();
 const api_router = require("./routes/api.router");
-const {} = require("./errors/error.handlers");
+const {
+  send404,
+  send500,
+  customErrorHandler,
+  psqlErrorHandler
+} = require("./errors/error.handlers");
 
 app.use(express.json());
 app.use("/api", api_router);
+app.use("/*", send404);
+app.use(customErrorHandler);
+app.use(psqlErrorHandler);
+app.use(send500);
 
 module.exports = app;

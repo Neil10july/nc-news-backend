@@ -1,5 +1,5 @@
 const db = require("../db/connection");
 
 exports.select_topics = () => {
-  console.log("TOPICS MODEL");
+  return db.select("*").from("topics");
 };
