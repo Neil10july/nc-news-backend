@@ -8,7 +8,6 @@ const {
 
 exports.send_articles = (req, res, next) => {
   const queries = req.query;
-
   select_articles(queries)
     .then(articles => {
       res.status(200).send({ articles });
@@ -20,7 +19,6 @@ exports.send_articles = (req, res, next) => {
 
 exports.send_article = (req, res, next) => {
   const { article_id } = req.params;
-
   select_article(article_id)
     .then(article => {
       res.status(200).send({ article });
@@ -36,7 +34,7 @@ exports.add_votes = (req, res, next) => {
 
   inc_article_votes(article_id, inc_votes)
     .then(article => {
-      res.status(201).send({ article });
+      res.status(200).send({ article });
     })
     .catch(err => {
       next(err);
@@ -46,11 +44,11 @@ exports.add_votes = (req, res, next) => {
 exports.add_comment = (req, res, next) => {
   const { article_id } = req.params;
   const { username } = req.body;
-  let { comment } = req.body;
-  if (comment.length < 1) {
-    comment = null;
+  let { body } = req.body;
+  if (body.length < 1) {
+    body = null;
   }
-  join_comment(article_id, username, comment)
+  join_comment(article_id, username, body)
     .then(comment => {
       res.status(201).send({ comment });
     })

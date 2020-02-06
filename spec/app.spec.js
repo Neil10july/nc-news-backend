@@ -57,10 +57,10 @@ describe("/api", () => {
             });
           });
       });
-      it("GET 400: responds with status 400 if no user is found", () => {
+      it("GET 404: responds with status 404 if no user is found", () => {
         return request(app)
           .get("/api/users/dkad")
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid username");
@@ -171,7 +171,7 @@ describe("/api", () => {
             expect(error).to.equal("Undefined column in query");
           });
       });
-      it("GET 400: Responds with status 400 and relevant message when passed an invalid order query", () => {
+      it("GET 404: Responds with status 400 and relevant message when passed an invalid order query", () => {
         return request(app)
           .get("/api/articles?order=test")
           .expect(400)
@@ -180,19 +180,19 @@ describe("/api", () => {
             expect(error).to.equal("Invalid order query");
           });
       });
-      it("GET 400: Responds with status 400 and relevant message when passed invalid author query", () => {
+      it("GET 404: Responds with status 404 and relevant message when passed invalid author query", () => {
         return request(app)
           .get("/api/articles?author=butter_bdge&")
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid author query");
           });
       });
-      it("GET 400: Responds with status 400 and relevant message when passed invalid topic query", () => {
+      it("GET 404: Responds with status 404 and relevant message when passed invalid topic query", () => {
         return request(app)
           .get("/api/articles?author=butter_bridge&topic=test")
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid topic query");
@@ -222,10 +222,10 @@ describe("/api", () => {
             });
           });
       });
-      it("GET 400: responds with status 400 and relevant message when passed non-existing article_id", () => {
+      it("GET 404: responds with status 404 and relevant message when passed non-existing article_id", () => {
         return request(app)
           .get("/api/articles/700")
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid article_id");
@@ -240,16 +240,16 @@ describe("/api", () => {
             expect(error).to.equal("Invalid syntax type");
           });
       });
-      it("PATCH 201: responds with status 201 and an object with the incremented vote value", () => {
+      it("PATCH 200: responds with status 200 and an object with the incremented vote value", () => {
         return request(app)
           .patch("/api/articles/5")
           .send({ inc_votes: 100 })
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             const article = body.article;
-            expect(article[0].article_id).to.equal(5);
-            expect(article[0].votes).to.equal(100);
-            expect(article).to.satisfy(article => {
+            expect(article.article_id).to.equal(5);
+            expect(article.votes).to.equal(100);
+            expect([article]).to.satisfy(article => {
               const keys = [
                 "author",
                 "title",
@@ -263,11 +263,11 @@ describe("/api", () => {
             });
           });
       });
-      it("PATCH 400: responds with status 400 and relevant message when passed non-existing article_id", () => {
+      it("PATCH 404: responds with status 404 and relevant message when passed non-existing article_id", () => {
         return request(app)
           .patch("/api/articles/566")
           .send({ inc_votes: 100 })
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid article_id");
@@ -359,7 +359,7 @@ describe("/api", () => {
           .post("/api/articles/3/comments")
           .send({
             username: "butter_bridge",
-            comment: "A very informative article, much like this comment"
+            body: "A very informative article, much like this comment"
           })
           .expect(201)
           .then(({ body }) => {
@@ -373,24 +373,34 @@ describe("/api", () => {
                 "created_at",
                 "body"
               ];
-              return check_keys(comment, keys);
+              return check_keys([comment], keys);
             });
           });
       });
-      it("POST 400: responds with status 400 and relevant message when URL contains invalid article id", () => {
+      it("POST 404: responds with status 404 and relevant message when URL contains invalid article id", () => {
         return request(app)
-          .post("/api/articles/500/comments")
-          .send({ username: "butter_bridge", comment: "body" })
-          .expect(400)
+          .post("/api/articles/5000/comments")
+          .send({ username: "butter_bridge", body: "body" })
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid article_id");
           });
       });
+      it("POST 400: responds with status 400 and relevant message when article_id is not an integer", () => {
+        return request(app)
+          .post("/api/articles/abc/comments")
+          .send({ username: "butter_bridge", body: "comment" })
+          .expect(400)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid syntax type");
+          });
+      });
       it("POST psql-23503: responds with status 422 and relevant message when request body contains invalid username", () => {
         return request(app)
           .post("/api/articles/5/comments")
-          .send({ username: "user", comment: "comment" })
+          .send({ username: "user", body: "comment" })
           .expect(422)
           .then(({ body }) => {
             const error = body.msg;
@@ -400,7 +410,7 @@ describe("/api", () => {
       it("POST psql-23502: responds with status 400 and relevant message when comment value is null", () => {
         return request(app)
           .post("/api/articles/5/comments")
-          .send({ username: "butter_bridge", comment: "" })
+          .send({ username: "butter_bridge", body: "" })
           .expect(400)
           .then(({ body }) => {
             const error = body.msg;
@@ -412,14 +422,14 @@ describe("/api", () => {
 
   describe("/comments", () => {
     describe("/:comment_id", () => {
-      it("PATCH 201: Responds with status 201 and increments the votes property by amount specified", () => {
+      it("PATCH 200: Responds with status 201 and increments the votes property by amount specified", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: 15 })
-          .expect(201)
+          .expect(200)
           .then(({ body }) => {
             const comment = body.comment;
-            expect(comment[0].votes).to.equal(29);
+            expect(comment.votes).to.equal(29);
           });
       });
       it("PATCH 400: Responds with status 400 and relevant message when the inc_votes is not an integer", () => {
@@ -432,11 +442,11 @@ describe("/api", () => {
             expect(error).to.equal("Invalid syntax type");
           });
       });
-      it("PATCH 400: Responds with status 400 and relevant message when passed a non-existent comment_id", () => {
+      it("PATCH 404: Responds with status 404 and relevant message when passed a non-existent comment_id", () => {
         return request(app)
           .patch("/api/comments/500")
           .send({ inc_votes: 60 })
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid comment_id");
@@ -457,16 +467,12 @@ describe("/api", () => {
       it("DELETE 200: Responds with status 200 and confirmation message", () => {
         return request(app)
           .delete("/api/comments/1")
-          .expect(200)
-          .then(({ body }) => {
-            const msg = body.msg;
-            expect(msg).to.equal("comment deleted");
-          });
+          .expect(204);
       });
-      it("DELETE 400: Responds with status 400 and relevant message when passed non-existent comment_id", () => {
+      it("DELETE 404: Responds with status 404 and relevant message when passed non-existent comment_id", () => {
         return request(app)
           .delete("/api/comments/600")
-          .expect(400)
+          .expect(404)
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Invalid comment_id");

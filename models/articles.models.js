@@ -1,5 +1,10 @@
 const db = require("../db/connection");
-const { check_article, check_order, check_all } = require("./models.utils");
+const {
+  check_article,
+  check_order,
+  check_all,
+  check_comment_body
+} = require("./models.utils");
 
 exports.select_articles = queries => {
   const { sort_by, order, author, topic } = queries;
@@ -51,7 +56,7 @@ exports.select_article = article_id => {
   });
 };
 
-exports.inc_article_votes = (article_id, inc_by) => {
+exports.inc_article_votes = (article_id, inc_by = 0) => {
   const check = check_article(article_id);
   if (!inc_by) {
     return Promise.reject({
@@ -62,11 +67,11 @@ exports.inc_article_votes = (article_id, inc_by) => {
   return Promise.all([check]).then(([checked]) => {
     if (checked) {
       return db("articles")
-        .where("article_id", "=", article_id)
+        .where({ article_id })
         .increment("votes", inc_by)
         .returning("*")
         .then(article => {
-          return article;
+          return article[0];
         });
     } else {
       return Promise.reject({ status: 400, msg: "Please check your queries" });
@@ -75,19 +80,26 @@ exports.inc_article_votes = (article_id, inc_by) => {
 };
 
 exports.join_comment = (article_id, author, body) => {
-  const check = check_article(article_id);
-  return Promise.all([check]).then(([article_check]) => {
-    if (article_check) {
-      return db("comments")
-        .insert({ article_id, author, body })
-        .returning("*")
-        .then(comment => {
-          return comment;
+  const article_check = check_article(article_id);
+  const check_body = check_comment_body(author, body);
+
+  return Promise.all([article_check, check_body]).then(
+    ([article_checked, body_checked]) => {
+      if (article_checked === true && body_checked === true) {
+        return db("comments")
+          .insert({ article_id, author, body })
+          .returning("*")
+          .then(comment => {
+            return comment[0];
+          });
+      } else {
+        return Promise.reject({
+          status: 400,
+          msg: "Please check your queries"
         });
-    } else {
-      return Promise.reject({ status: 400, msg: "Please check your queries" });
+      }
     }
-  });
+  );
 };
 
 exports.select_comments = (article_id, sort_by, order) => {

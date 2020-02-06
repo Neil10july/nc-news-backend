@@ -1,3 +1,4 @@
 node_modules
 knexfile
 viewdb
+test.output.md

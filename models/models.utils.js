@@ -8,7 +8,7 @@ const check_article = article_id => {
       if (data.length !== 0) {
         return true;
       } else {
-        return Promise.reject({ status: 400, msg: "Invalid article_id" });
+        return Promise.reject({ status: 404, msg: "Invalid article_id" });
       }
     });
 };
@@ -21,7 +21,7 @@ const check_comment = comment_id => {
       if (data.length !== 0) {
         return true;
       } else {
-        return Promise.reject({ status: 400, msg: "Invalid comment_id" });
+        return Promise.reject({ status: 404, msg: "Invalid comment_id" });
       }
     });
 };
@@ -35,7 +35,22 @@ const check_author = author => {
         if (data.length !== 0) {
           return true;
         } else {
-          return Promise.reject({ status: 400, msg: "Invalid author query" });
+          return Promise.reject({ status: 404, msg: "Invalid author query" });
+        }
+      });
+  } else return true;
+};
+
+const check_username = username => {
+  if (username) {
+    return db("users")
+      .select("*")
+      .where({ username })
+      .then(data => {
+        if (data.length !== 0) {
+          return true;
+        } else {
+          return Promise.reject({ status: 404, msg: "Invalid username" });
         }
       });
   } else return true;
@@ -50,7 +65,7 @@ const check_topic = topic => {
         if (data.length !== 0) {
           return true;
         } else {
-          return Promise.reject({ status: 400, msg: "Invalid topic query" });
+          return Promise.reject({ status: 404, msg: "Invalid topic query" });
         }
       });
   } else return true;
@@ -76,11 +91,23 @@ const check_all = (this_order, this_author, this_topic) => {
   });
 };
 
+const check_comment_body = (author, body) => {
+  if (author === undefined || body === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg:
+        "Body must be in correct format (Ex. { username: 'username', body: 'comment' })"
+    });
+  } else return true;
+};
+
 module.exports = {
   check_article,
   check_order,
   check_author,
+  check_username,
   check_topic,
   check_comment,
+  check_comment_body,
   check_all
 };
