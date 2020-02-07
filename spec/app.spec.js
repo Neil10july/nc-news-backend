@@ -50,10 +50,10 @@ describe("/api", () => {
           .expect(200)
           .then(({ body }) => {
             const user = body.user;
-            expect(user[0].username).to.equal("butter_bridge");
+            expect(user.username).to.equal("butter_bridge");
             expect(user).to.satisfy(user => {
               const keys = ["username", "avatar_url", "name"];
-              return check_keys(user, keys);
+              return check_keys([user], keys);
             });
           });
       });
@@ -533,6 +533,24 @@ describe("/api", () => {
       it("responds with 405 when a user requests a unsupported method ", () => {
         return request(app)
           .delete("/api/articles")
+          .expect(405)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Method Not Allowed");
+          });
+      });
+      it("responds with 405 when a user requests a unsupported method ", () => {
+        return request(app)
+          .delete("/api")
+          .expect(405)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Method Not Allowed");
+          });
+      });
+      it("responds with 405 when a user requests a unsupported method ", () => {
+        return request(app)
+          .post("/api")
           .expect(405)
           .then(({ body }) => {
             const error = body.msg;
