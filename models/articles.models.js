@@ -131,3 +131,20 @@ exports.select_comments = (article_id, sort_by, order) => {
     }
   );
 };
+
+exports.remove_article = article_id => {
+  const check = check_article(article_id);
+
+  return Promise.all([check]).then(([checked]) => {
+    if (checked) {
+      return db("articles")
+        .where({ article_id })
+        .del()
+        .then(() => {
+          return "article deleted";
+        });
+    } else {
+      return Promise.reject({ status: 400, msg: "Invalid article id" });
+    }
+  });
+};

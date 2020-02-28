@@ -191,7 +191,7 @@ describe("/api", () => {
       });
       it("GET 404: Responds with status 404 and relevant message when passed invalid topic query", () => {
         return request(app)
-          .get("/api/articles?author=butter_bridge&topic=test")
+          .get("/api/articles?topic=test")
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
@@ -293,6 +293,20 @@ describe("/api", () => {
             expect(error).to.equal(
               "Body must be in correct format (Ex. { inc_vote: 5 })"
             );
+          });
+      });
+      it("DELETE 204: Responds with status 204", () => {
+        return request(app)
+          .delete("/api/articles/2")
+          .expect(204);
+      });
+      it("DELETE 404: Responds with status 404 and relevant message", () => {
+        return request(app)
+          .delete("/api/articles/610")
+          .expect(404)
+          .then(({ body }) => {
+            const error = body.msg;
+            expect(error).to.equal("Invalid article_id");
           });
       });
     });
@@ -464,14 +478,14 @@ describe("/api", () => {
             );
           });
       });
-      it("DELETE 200: Responds with status 200 and confirmation message", () => {
+      it("DELETE 204: Responds with status 204 and confirmation message", () => {
         return request(app)
-          .delete("/api/comments/1")
+          .delete("/api/comments/5")
           .expect(204);
       });
       it("DELETE 404: Responds with status 404 and relevant message when passed non-existent comment_id", () => {
         return request(app)
-          .delete("/api/comments/600")
+          .delete("/api/comments/690")
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;

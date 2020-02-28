@@ -3,7 +3,8 @@ const {
   select_article,
   select_comments,
   inc_article_votes,
-  join_comment
+  join_comment,
+  remove_article
 } = require("../models/articles.models");
 
 exports.send_articles = (req, res, next) => {
@@ -63,6 +64,18 @@ exports.send_comments = (req, res, next) => {
   select_comments(article_id, sort_by, order)
     .then(comments => {
       res.status(200).send({ comments });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+
+exports.erase_article = (req, res, next) => {
+  const { article_id } = req.params;
+
+  remove_article(article_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch(err => {
       next(err);

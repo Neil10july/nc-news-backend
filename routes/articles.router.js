@@ -4,7 +4,8 @@ const {
   send_article,
   send_comments,
   add_votes,
-  add_comment
+  add_comment,
+  erase_article
 } = require("../controllers/articles.controllers");
 const { send405 } = require("../errors/error.handlers");
 
@@ -17,6 +18,7 @@ articles_router
   .route("/:article_id")
   .get(send_article)
   .patch(add_votes)
+  .delete(erase_article)
   .all(send405);
 
 articles_router
