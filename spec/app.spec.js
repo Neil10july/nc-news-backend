@@ -198,6 +198,22 @@ describe("/api", () => {
             expect(error).to.equal("Invalid topic query");
           });
       });
+      it("POST 201: responds with status 201 and new article", () => {
+        return request(app)
+          .post("/api/articles")
+          .send({
+            title: "unbelievable",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "it actually works!"
+          })
+          .expect(201)
+          .then(({ body }) => {
+            const { article } = body;
+            expect(article.author).to.equal("butter_bridge");
+            expect(article.topic).to.equal("mitch");
+          });
+      });
     });
 
     describe("/:article_id", () => {
@@ -295,7 +311,7 @@ describe("/api", () => {
             );
           });
       });
-      it("DELETE 204: Responds with status 204", () => {
+      xit("DELETE 204: Responds with status 204", () => {
         return request(app)
           .delete("/api/articles/2")
           .expect(204);
@@ -569,6 +585,101 @@ describe("/api", () => {
           .then(({ body }) => {
             const error = body.msg;
             expect(error).to.equal("Method Not Allowed");
+          });
+      });
+    });
+  });
+
+  describe("login functionality", () => {
+    describe("createUser", () => {
+      it("POST 201 - responds with status 201, new user and a confirmation messsage", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ username: "user", password: "pass", name: "Neil" })
+          .expect(201)
+          .then(({ body }) => {
+            const { user, msg } = body;
+            expect(user.username).to.equal("user");
+            return expect(msg).to.equal("user created!");
+          });
+      });
+      it("POST 400 - responds with status 400 and relevant messsage if username contains incorrect syntax", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ username: "%%%% ", password: "pass", name: "Neil" })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            return expect(msg).to.equal(
+              "username must only contain alphanumeric characters"
+            );
+          });
+      });
+      it("POST 400 - responds with status 400 and relevant messsage if name contains incorrect syntax", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ username: "user", password: "pass", name: "Neil%" })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            return expect(msg).to.equal(
+              "name must only contain only A-Z characters"
+            );
+          });
+      });
+      it("POST 400 - responds with status 400 and relevant messsage if password contains incorrect syntax", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ username: "user", password: "pass ", name: "Neil" })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            return expect(msg).to.equal(
+              "password must only contain alphanumeric characters"
+            );
+          });
+      });
+      it("POST 400 - responds with status 400 and relevant messsage sent incomplete post request", () => {
+        return request(app)
+          .post("/api/users")
+          .send({ name: "Neil" })
+          .expect(400)
+          .then(({ body }) => {
+            const { msg } = body;
+            return expect(msg).to.equal("Body contains null value");
+          });
+      });
+    });
+
+    describe("validateUserCreds", () => {
+      it("POST 200: responds with status 200 and true if username and password match", () => {
+        return request(app)
+          .post("/api/login")
+          .send({ username: "butter_bridge", password: "pass" })
+          .expect(200)
+          .then(res => {
+            const { match } = res.body;
+            expect(match).to.equal(true);
+          });
+      });
+      it("POST 404: responds with status 404 if username is not found", () => {
+        return request(app)
+          .post("/api/login")
+          .send({ username: "butter_brid", password: "pass" })
+          .expect(404)
+          .then(res => {
+            const { msg } = res.body;
+            expect(msg).to.equal("Invalid username");
+          });
+      });
+      it("POST 401: responds with status 401 and a response of false if password does not match", () => {
+        return request(app)
+          .post("/api/login")
+          .send({ username: "butter_bridge", password: "invalid" })
+          .expect(401)
+          .then(res => {
+            const { msg } = res.body;
+            expect(msg).to.equal("Invalid password");
           });
       });
     });

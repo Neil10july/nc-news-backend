@@ -4,7 +4,8 @@ const {
   select_comments,
   inc_article_votes,
   join_comment,
-  remove_article
+  remove_article,
+  addArticle
 } = require("../models/articles.models");
 
 exports.send_articles = (req, res, next) => {
@@ -70,12 +71,22 @@ exports.send_comments = (req, res, next) => {
     });
 };
 
+exports.createArticle = (req, res, next) => {
+  const article = req.body;
+  addArticle(article)
+    .then(article => {
+      res.status(201).send({ article });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+
 exports.erase_article = (req, res, next) => {
   const { article_id } = req.params;
-
   remove_article(article_id)
     .then(() => {
-      res.status(204).send();
+      res.status(204);
     })
     .catch(err => {
       next(err);

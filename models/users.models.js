@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { check_username } = require("./models.utils");
+const { check_username, testUserCred } = require("./models.utils");
 
 exports.selectUser = username => {
   const check = check_username(username);
@@ -14,5 +14,23 @@ exports.selectUser = username => {
           });
       }
     });
-  } else return db.select("*").from("users");
+  } else
+    return db
+      .select("users.username", "users.avatar_url", "users.name")
+      .from("users");
+};
+
+exports.addUser = (username, password, name) => {
+  const testCreds = testUserCred(username, password, name);
+
+  return Promise.all([testCreds]).then(([creds_tested]) => {
+    if (creds_tested) {
+      return db("users")
+        .insert({ username, password, name })
+        .returning("*")
+        .then(res => {
+          return { user: res[0], msg: "user created!" };
+        });
+    }
+  });
 };

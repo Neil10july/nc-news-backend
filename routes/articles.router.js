@@ -5,13 +5,15 @@ const {
   send_comments,
   add_votes,
   add_comment,
-  erase_article
+  erase_article,
+  createArticle
 } = require("../controllers/articles.controllers");
 const { send405 } = require("../errors/error.handlers");
 
 articles_router
   .route("/")
   .get(send_articles)
+  .post(createArticle)
   .all(send405);
 
 articles_router

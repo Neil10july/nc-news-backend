@@ -1,10 +1,11 @@
 const users_router = require("express").Router();
-const { sendUser } = require("../controllers/users.controllers");
+const { sendUser, newUser } = require("../controllers/users.controllers");
 const { send405 } = require("../errors/error.handlers");
 
 users_router
   .route("/")
   .get(sendUser)
+  .post(newUser)
   .all(send405);
 
 users_router

@@ -101,6 +101,30 @@ const check_comment_body = (author, body) => {
   } else return true;
 };
 
+const testUserCred = (username, password, name) => {
+  const regex = /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/;
+  const testUser = regex.test(username);
+  const testPass = regex.test(password);
+  const testName = /^[A-Za-z]+$/.test(name);
+
+  if (!testUser) {
+    return Promise.reject({
+      status: 400,
+      msg: "username must only contain alphanumeric characters"
+    });
+  } else if (!testPass) {
+    return Promise.reject({
+      status: 400,
+      msg: "password must only contain alphanumeric characters"
+    });
+  } else if (!testName) {
+    return Promise.reject({
+      status: 400,
+      msg: "name must only contain only A-Z characters"
+    });
+  } else return true;
+};
+
 module.exports = {
   check_article,
   check_order,
@@ -109,5 +133,6 @@ module.exports = {
   check_topic,
   check_comment,
   check_comment_body,
-  check_all
+  check_all,
+  testUserCred
 };
