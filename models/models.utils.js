@@ -8,7 +8,7 @@ const check_article = article_id => {
       if (data.length !== 0) {
         return true;
       } else {
-        return Promise.reject({ status: 404, msg: "Invalid article_id" });
+        return Promise.reject({ status: 404, msg: "Article does not exist" });
       }
     });
 };
@@ -21,7 +21,7 @@ const check_comment = comment_id => {
       if (data.length !== 0) {
         return true;
       } else {
-        return Promise.reject({ status: 404, msg: "Invalid comment_id" });
+        return Promise.reject({ status: 404, msg: "Comment does not exist" });
       }
     });
 };
@@ -35,7 +35,7 @@ const check_author = author => {
         if (data.length !== 0) {
           return true;
         } else {
-          return Promise.reject({ status: 404, msg: "Invalid author query" });
+          return Promise.reject({ status: 404, msg: "Author does not exist" });
         }
       });
   } else return true;
@@ -50,7 +50,10 @@ const check_username = username => {
         if (data.length !== 0) {
           return true;
         } else {
-          return Promise.reject({ status: 404, msg: "Invalid username" });
+          return Promise.reject({
+            status: 404,
+            msg: "Username does not exist"
+          });
         }
       });
   } else return true;
@@ -65,7 +68,7 @@ const check_topic = topic => {
         if (data.length !== 0) {
           return true;
         } else {
-          return Promise.reject({ status: 404, msg: "Invalid topic query" });
+          return Promise.reject({ status: 404, msg: "Topic does not exist" });
         }
       });
   } else return true;

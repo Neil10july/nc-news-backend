@@ -63,7 +63,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid username");
+            expect(error).to.equal("Username does not exist");
           });
       });
       it("GET 405: responds with status 405 if user requests unsupported method and relevant error message", () => {
@@ -186,7 +186,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid author query");
+            expect(error).to.equal("Author does not exist");
           });
       });
       it("GET 404: Responds with status 404 and relevant message when passed invalid topic query", () => {
@@ -195,7 +195,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid topic query");
+            expect(error).to.equal("Topic does not exist");
           });
       });
       it("POST 201: responds with status 201 and new article", () => {
@@ -244,7 +244,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid article_id");
+            expect(error).to.equal("Article does not exist");
           });
       });
       it("GET 400: responds with status 400 and relevant message when passed incorrect article_id syntax", () => {
@@ -286,7 +286,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid article_id");
+            expect(error).to.equal("Article does not exist");
           });
       });
       it("PATCH psql-22P02: responds with status 400 error when the request body contains invalid syntax", () => {
@@ -322,7 +322,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid article_id");
+            expect(error).to.equal("Article does not exist");
           });
       });
     });
@@ -414,7 +414,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid article_id");
+            expect(error).to.equal("Article does not exist");
           });
       });
       it("POST 400: responds with status 400 and relevant message when article_id is not an integer", () => {
@@ -479,7 +479,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid comment_id");
+            expect(error).to.equal("Comment does not exist");
           });
       });
       it("PATCH 400: Responds with status 400 and relevant message when the request body is in an unsupported/incorrect format", () => {
@@ -505,7 +505,7 @@ describe("/api", () => {
           .expect(404)
           .then(({ body }) => {
             const error = body.msg;
-            expect(error).to.equal("Invalid comment_id");
+            expect(error).to.equal("Comment does not exist");
           });
       });
     });
@@ -669,7 +669,7 @@ describe("/api", () => {
           .expect(404)
           .then(res => {
             const { msg } = res.body;
-            expect(msg).to.equal("Invalid username");
+            expect(msg).to.equal("Username does not exist");
           });
       });
       it("POST 401: responds with status 401 and a response of false if password does not match", () => {
