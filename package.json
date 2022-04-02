@@ -10,7 +10,7 @@
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
     "seed-test": "NODE_ENV=test knex seed:run",
-    "view-dev": "psql -f ./db/viewdb/dev.sql > ./db/viewdb/dev.db.txt",
+    "view-dev": "psql postgres -f ./db/viewdb/dev.sql > ./db/viewdb/dev.db.txt",
     "view-test": "NODE_ENV=test psql -f ./db/viewdb/test.sql > ./db/viewdb/test.db.txt",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "NODE_ENV=test mocha spec/app.spec.js",
@@ -34,7 +34,8 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.20.10",
-    "pg": "^7.18.2"
+    "pg": "^7.18.2",
+    "pg-connection-string": "^2.5.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
