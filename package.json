@@ -14,7 +14,7 @@
     "view-test": "NODE_ENV=test psql -f ./db/viewdb/test.sql > ./db/viewdb/test.db.txt",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "NODE_ENV=test mocha spec/app.spec.js",
-    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get https://nc-news-np.herokuapp.com) knex seed:run",
     "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
     "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback",
     "start": "node listen.js"
