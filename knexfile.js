@@ -14,7 +14,7 @@ const baseConfig = {
 
 const customConfig = {
   production: {
-    connection: `${DB_URL}?ssl=true`
+    connection: 'postgres://neil:pass@localhost:5432/nc_news'
   },
   development: {
     connection: {

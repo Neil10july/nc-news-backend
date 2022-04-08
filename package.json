@@ -10,11 +10,11 @@
     "migrate-rollback": "knex migrate:rollback",
     "seed": "knex seed:run",
     "seed-test": "NODE_ENV=test knex seed:run",
-    "view-dev": "psql postgres -f ./db/viewdb/dev.sql > ./db/viewdb/dev.db.txt",
+    "view-dev": "psql -f ./db/viewdb/dev.sql > ./db/viewdb/dev.db.txt",
     "view-test": "NODE_ENV=test psql -f ./db/viewdb/test.sql > ./db/viewdb/test.db.txt",
     "test-utils": "mocha spec/utils.spec.js",
     "test": "NODE_ENV=test mocha spec/app.spec.js",
-    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get https://nc-news-np.herokuapp.com) knex seed:run",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
     "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
     "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback",
     "start": "node listen.js"
@@ -34,6 +34,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.20.10",
+    "parse": "^3.4.1",
     "pg": "^7.18.2",
     "pg-connection-string": "^2.5.0"
   },
