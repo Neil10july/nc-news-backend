@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "bc-nc-news",
   "main": "index.js",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "make-migrate": "knex migrate:make",
