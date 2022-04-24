@@ -13,8 +13,13 @@ const baseConfig = {
 };
 
 const customConfig = {
-  production: {
-    connection: 'postgres://neil:pass@localhost:5432/nc_news'
+production: {
+    connection: {
+      connectionString: DB_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      }
+    }
   },
   development: {
     connection: {
